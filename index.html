@@ -1,0 +1,1246 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111827; --card:#1F2937; --card-hover:#273549; --border:#374151; --border-soft:#2B3444;
+    --text:#F9FAFB; --text-secondary:#9CA3AF; --text-muted:#6B7280;
+    --primary:#3B82F6; --primary-hover:#2563EB; --primary-bg:rgba(59,130,246,.14); --primary-border:rgba(59,130,246,.35);
+    --success:#22C55E; --success-bg:rgba(34,197,94,.14);
+    --warning:#F59E0B; --warning-bg:rgba(245,158,11,.14);
+    --error:#EF4444; --error-bg:rgba(239,68,68,.14);
+    --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:40px;
+    --r-sm:8px; --r-md:10px; --r-lg:14px; --r-xl:18px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  @media (prefers-reduced-motion:reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+
+  .app{
+    background:var(--bg); color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh; padding:var(--s4) var(--s4) 64px;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .oculto{display:none !important;}
+
+  /* ---------- Header ---------- */
+  .header{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:var(--s3); margin-bottom:var(--s4);}
+  .header h1{font-size:32px; font-weight:700; margin:0 0 6px; letter-spacing:-.02em;}
+  .header .subtitulo{font-size:16px; color:var(--text-secondary); margin:0; max-width:560px;}
+  .header-acoes{display:flex; align-items:center; gap:var(--s2);}
+  .badge-contador{
+    display:flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border);
+    color:var(--text-secondary); font-size:13px; font-weight:500; padding:8px 14px; border-radius:999px;
+  }
+  .badge-contador b{color:var(--text); font-family:'JetBrains Mono',monospace;}
+
+  /* ---------- Buttons ---------- */
+  button{font-family:'Inter',sans-serif; cursor:pointer;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 18px;
+    border-radius:var(--r-md); font-size:14px; font-weight:600; border:1px solid var(--border);
+    background:var(--card); color:var(--text); transition:background .15s, border-color .15s, transform .1s, box-shadow .15s;
+    white-space:nowrap;
+  }
+  .btn:hover{background:var(--card-hover); border-color:#475569;}
+  .btn:active{transform:scale(.97);}
+  .btn:focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+  .btn-primary{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-hover); border-color:var(--primary-hover); box-shadow:0 4px 14px rgba(59,130,246,.35);}
+  .btn-ghost{background:transparent; border-color:var(--border);}
+  .btn-ghost:hover{background:var(--card);}
+  .btn-danger{background:var(--error); border-color:var(--error); color:#fff;}
+  .btn-danger:hover{background:#DC2626; border-color:#DC2626;}
+  .btn-sm{height:36px; padding:0 14px; font-size:13px; border-radius:var(--r-sm);}
+  .btn svg{width:16px; height:16px; flex-shrink:0;}
+
+  .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:var(--r-sm); border:1px solid transparent;
+    background:transparent; color:var(--text-secondary); transition:background .15s, color .15s, border-color .15s;
+  }
+  .icon-btn:hover{background:var(--border-soft); color:var(--text); border-color:var(--border);}
+  .icon-btn.perigo:hover{background:var(--error-bg); color:var(--error);}
+  .icon-btn svg{width:16px; height:16px;}
+
+  /* ---------- Tooltips ---------- */
+  .tip{position:relative;}
+  .tip::after{
+    content:attr(data-tip); position:absolute; bottom:calc(100% + 8px); left:50%;
+    transform:translateX(-50%) translateY(3px); background:#030712; color:var(--text);
+    font-size:11.5px; font-weight:500; padding:5px 9px; border-radius:6px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .12s ease, transform .12s ease;
+    border:1px solid var(--border); z-index:90;
+  }
+  .tip:hover::after, .tip:focus-visible::after{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ---------- Stat cards ---------- */
+  .stats-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:var(--s2); margin-bottom:var(--s3);}
+  .stat-card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:20px 22px; display:flex; flex-direction:column; gap:14px;
+    box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s, border-color .15s, box-shadow .15s;
+    animation:entra .3s ease both;
+  }
+  .stat-card:hover{transform:translateY(-2px); border-color:#475569; box-shadow:0 8px 20px rgba(0,0,0,.25);}
+  .stat-icone{width:40px; height:40px; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center;}
+  .stat-icone svg{width:20px; height:20px;}
+  .stat-card.c-primary .stat-icone{background:var(--primary-bg); color:var(--primary);}
+  .stat-card.c-success .stat-icone{background:var(--success-bg); color:var(--success);}
+  .stat-card.c-warning .stat-icone{background:var(--warning-bg); color:var(--warning);}
+  .stat-card.c-error .stat-icone{background:var(--error-bg); color:var(--error);}
+  .stat-card.c-purple .stat-icone{background:rgba(168,85,247,.14); color:#A855F7;}
+  .stat-numero{font-size:28px; font-weight:700; line-height:1; letter-spacing:-.01em;}
+  .stat-label{font-size:13px; color:var(--text-secondary); margin-top:4px;}
+  .stat-card .barra{height:6px; border-radius:999px; background:var(--border-soft); overflow:hidden; margin-top:2px;}
+  .stat-card .barra .fill{height:100%; border-radius:999px; transition:width .6s cubic-bezier(.4,0,.2,1);}
+
+  /* ---------- Toolbar / search ---------- */
+  .toolbar{display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; margin-bottom:var(--s2);}
+  .busca-wrap{flex:1; min-width:280px; position:relative;}
+  .busca-wrap svg{position:absolute; left:16px; top:50%; transform:translateY(-50%); width:19px; height:19px; color:var(--text-muted); pointer-events:none;}
+  .busca-wrap input{
+    width:100%; height:46px; background:var(--card); border:1px solid var(--border);
+    color:var(--text); padding:0 42px 0 46px; border-radius:var(--r-md); font-size:14.5px;
+    font-family:'Inter',sans-serif; transition:border-color .15s, box-shadow .15s;
+  }
+  .busca-wrap input::placeholder{color:var(--text-muted);}
+  .busca-wrap input:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-bg);}
+  .busca-wrap .limpar{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none;
+    color:var(--text-muted); width:30px; height:30px; border-radius:var(--r-sm); display:none;
+    align-items:center; justify-content:center;
+  }
+  .busca-wrap .limpar:hover{background:var(--border-soft); color:var(--text);}
+  .busca-wrap.tem-texto .limpar{display:flex;}
+  select#filtroCategoria{
+    height:46px; background:var(--card); border:1px solid var(--border); color:var(--text);
+    padding:0 14px; border-radius:var(--r-md); font-size:14px; font-family:'Inter',sans-serif; transition:border-color .15s;
+  }
+  select#filtroCategoria:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-bg);}
+  .caption{font-size:13px; color:var(--text-muted); margin:0 0 var(--s3);}
+
+  /* ---------- HD grid & cards ---------- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:var(--s2);}
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:20px; cursor:pointer; position:relative;
+    transition:transform .15s, border-color .15s, background .15s, box-shadow .15s;
+    animation:entra .3s ease both;
+  }
+  @keyframes entra{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  .card:hover{background:var(--card-hover); border-color:#475569; transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,.3);}
+  .card:focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+  .card-topo{display:flex; align-items:flex-start; gap:12px; margin-bottom:14px;}
+  .card-icone{width:38px; height:38px; border-radius:var(--r-md); background:var(--primary-bg); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .card-icone svg{width:19px; height:19px;}
+  .card-titulos{flex:1; min-width:0;}
+  .card-titulos h3{font-size:15.5px; font-weight:600; margin:0 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .card-meta{font-size:12.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .badge{display:inline-flex; align-items:center; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; letter-spacing:.01em; line-height:1.4;}
+  .menu-wrap{position:relative; flex-shrink:0;}
+  .menu-drop{
+    position:absolute; top:calc(100% + 4px); right:0; background:#0B1220; border:1px solid var(--border);
+    border-radius:var(--r-md); min-width:150px; box-shadow:0 12px 28px rgba(0,0,0,.45); display:none; overflow:hidden; z-index:40;
+  }
+  .menu-drop.aberto{display:block;}
+  .menu-drop button{width:100%; display:flex; align-items:center; gap:8px; padding:10px 14px; background:none; border:none; color:var(--text); font-size:13.5px; text-align:left;}
+  .menu-drop button svg{width:15px; height:15px; color:var(--text-secondary);}
+  .menu-drop button:hover{background:var(--border-soft);}
+  .menu-drop button.perigo{color:var(--error);}
+  .menu-drop button.perigo:hover{background:var(--error-bg);}
+  .menu-drop button.perigo svg{color:var(--error);}
+  .progresso-linha{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;}
+  .progresso-linha .pct{font-size:13px; font-weight:600; font-family:'JetBrains Mono',monospace;}
+  .progresso-linha .cap{font-size:12px; color:var(--text-muted);}
+  .barra-moderna{height:8px; border-radius:999px; background:var(--border-soft); overflow:hidden;}
+  .barra-moderna .fill{height:100%; border-radius:999px; transition:width .6s cubic-bezier(.4,0,.2,1);}
+  .mini-stats{display:flex; margin-top:14px; padding-top:14px; border-top:1px solid var(--border-soft);}
+  .mini-stat{flex:1; text-align:left;}
+  .mini-stat + .mini-stat{border-left:1px solid var(--border-soft); padding-left:12px; margin-left:12px;}
+  .mini-stat .valor{font-size:14px; font-weight:600; font-family:'JetBrains Mono',monospace;}
+  .mini-stat .rotulo{font-size:11px; color:var(--text-muted); margin-top:2px;}
+
+  .c-success{color:var(--success) !important;}
+  .c-warning{color:var(--warning) !important;}
+  .c-error{color:var(--error) !important;}
+  .fill-success{background:linear-gradient(90deg,#16A34A,#22C55E);}
+  .fill-warning{background:linear-gradient(90deg,#D97706,#F59E0B);}
+  .fill-error{background:linear-gradient(90deg,#DC2626,#EF4444);}
+
+  .vazio{text-align:center; padding:72px 24px; color:var(--text-muted); border:1px dashed var(--border); border-radius:var(--r-lg); display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .vazio svg{width:44px; height:44px; color:var(--text-muted); opacity:.6;}
+  .vazio strong{color:var(--text-secondary); font-size:15px; font-weight:600;}
+  .vazio span{font-size:13.5px;}
+
+  /* ---------- Breadcrumb / detail view header ---------- */
+  .breadcrumb{
+    display:flex; align-items:center; gap:6px; font-size:13.5px; color:var(--text-muted);
+    margin-bottom:var(--s3); cursor:pointer; width:fit-content;
+  }
+  .breadcrumb:hover{color:var(--text-secondary);}
+  .breadcrumb svg{width:15px; height:15px;}
+  .breadcrumb .atual{color:var(--text-secondary);}
+
+  .detalhe-header{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:22px 24px; margin-bottom:var(--s3);
+  }
+  .detalhe-header-topo{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px;}
+  .detalhe-header-titulos{display:flex; gap:14px; align-items:flex-start;}
+  .detalhe-header h2{font-size:22px; font-weight:700; margin:0 0 6px; letter-spacing:-.01em;}
+  .detalhe-header .meta{font-size:13px; color:var(--text-secondary); display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+
+  .mini-cards-detalhe{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px;}
+  .mini-card-detalhe{background:#151C28; border:1px solid var(--border-soft); border-radius:var(--r-sm); padding:12px 14px;}
+  .mini-card-detalhe .rot{font-size:11.5px; color:var(--text-muted);}
+  .mini-card-detalhe .val{font-size:16px; font-weight:700; font-family:'JetBrains Mono',monospace; margin-top:3px;}
+
+  /* ---------- Secção de serviços / busca interna ---------- */
+  .secao-titulo{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:12px; flex-wrap:wrap;}
+  .secao-titulo h4{font-size:16px; font-weight:600; margin:0;}
+  .secao-titulo .contagem{color:var(--text-muted); font-weight:500; font-size:14px;}
+
+  .busca-interna{position:relative; margin-bottom:var(--s3);}
+  .busca-interna svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:17px; height:17px; color:var(--text-muted);}
+  .busca-interna input{
+    width:100%; height:42px; background:var(--card); border:1px solid var(--border); color:var(--text);
+    padding:0 14px 0 40px; border-radius:var(--r-md); font-size:14px; font-family:'Inter',sans-serif;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .busca-interna input::placeholder{color:var(--text-muted);}
+  .busca-interna input:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-bg);}
+
+  /* ---------- Accordion de serviços ---------- */
+  .lista-servicos{display:flex; flex-direction:column; gap:10px;}
+  .servico-item{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg);
+    overflow:hidden; transition:border-color .15s; animation:entra .25s ease both;
+  }
+  .servico-item:hover{border-color:#475569;}
+  .servico-item.destaque{border-color:var(--primary-border);}
+
+  .servico-cabecalho{
+    display:flex; align-items:center; gap:12px; padding:16px 18px; cursor:pointer; user-select:none;
+  }
+  .servico-cabecalho:hover{background:var(--card-hover);}
+  .chevron{width:18px; height:18px; color:var(--text-muted); flex-shrink:0; transition:transform .25s ease;}
+  .servico-item.aberto .chevron{transform:rotate(90deg); color:var(--text-secondary);}
+  .servico-nome{font-size:14.5px; font-weight:600; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .servico-resumo{font-size:12.5px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; white-space:nowrap;}
+  .acoes-servico{display:flex; gap:2px; opacity:0; transition:opacity .12s;}
+  .servico-cabecalho:hover .acoes-servico, .servico-cabecalho:focus-within .acoes-servico{opacity:1;}
+
+  .servico-corpo{display:grid; grid-template-rows:0fr; transition:grid-template-rows .28s ease;}
+  .servico-item.aberto .servico-corpo{grid-template-rows:1fr;}
+  .servico-corpo-inner{overflow:hidden;}
+  .servico-conteudo{padding:0 18px 16px; border-top:1px solid var(--border-soft);}
+
+  .ponto-linha{
+    display:flex; align-items:center; gap:10px; padding:11px 4px; border-radius:var(--r-sm);
+    transition:background .12s;
+  }
+  .ponto-linha:hover, .ponto-linha:focus-within{background:var(--border-soft);}
+  .ponto-linha + .ponto-linha{border-top:1px solid var(--border-soft);}
+  .ponto-pin{width:15px; height:15px; color:var(--primary); flex-shrink:0;}
+  .ponto-linha.destaque{background:var(--primary-bg);}
+  .ponto-nome{font-size:14px; font-weight:500; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .ponto-dados{font-size:13px; color:var(--text-secondary); font-family:'JetBrains Mono',monospace; white-space:nowrap;}
+  .acoes-ponto{display:flex; gap:2px; opacity:0; transition:opacity .12s; flex-shrink:0;}
+  .ponto-linha:hover .acoes-ponto, .ponto-linha:focus-within .acoes-ponto{opacity:1;}
+
+  .sem-pontos, .sem-servicos{font-size:13.5px; color:var(--text-muted); padding:20px; text-align:center;}
+  .rodape-servico{padding-top:10px; margin-top:4px; border-top:1px solid var(--border-soft);}
+
+  /* ---------- Modais ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(3,7,18,.75); backdrop-filter:blur(2px);
+    display:none; align-items:flex-start; justify-content:center; padding:56px 16px;
+    z-index:100; overflow-y:auto; opacity:0; transition:opacity .18s ease;
+  }
+  .overlay.aberto{display:flex; opacity:1;}
+  .modal{
+    background:var(--card); border:1px solid var(--border); color:var(--text); width:100%; max-width:460px;
+    border-radius:var(--r-xl); padding:28px; box-shadow:0 24px 60px rgba(0,0,0,.5);
+    transform:translateY(10px) scale(.98); transition:transform .2s ease;
+  }
+  .overlay.aberto .modal{transform:translateY(0) scale(1);}
+  .modal-cabecalho{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;}
+  .modal h2{font-size:20px; font-weight:700; margin:0; letter-spacing:-.01em;}
+  .modal .subtitulo{font-size:13px; color:var(--text-secondary); margin-bottom:20px;}
+  .campo{margin-bottom:16px;}
+  .campo label{display:block; font-size:12.5px; font-weight:600; color:var(--text-secondary); margin-bottom:7px; letter-spacing:.01em;}
+  .campo input, .campo select, .campo textarea{
+    width:100%; padding:11px 13px; border:1px solid var(--border); border-radius:var(--r-md);
+    font-family:'Inter',sans-serif; font-size:14px; background:#151C28; color:var(--text);
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-bg);}
+  .campo textarea{min-height:70px; resize:vertical; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.5;}
+  .campo-linha{display:flex; gap:12px;}
+  .campo-linha .campo{flex:1;}
+  .modal-acoes{display:flex; justify-content:flex-end; gap:10px; margin-top:22px;}
+  .msg-erro{color:var(--error); font-size:12.5px; margin-top:6px; display:none;}
+  .fechar-x{
+    background:none; border:none; color:var(--text-secondary); width:32px; height:32px; border-radius:var(--r-sm);
+    display:flex; align-items:center; justify-content:center; transition:background .15s, color .15s;
+  }
+  .fechar-x:hover{background:var(--border-soft); color:var(--text);}
+  .fechar-x svg{width:18px; height:18px;}
+  #overlayConfirm .modal{max-width:380px;}
+  #overlayConfirm p{font-size:14px; color:var(--text-secondary); margin:0 0 4px; line-height:1.5;}
+
+  .toggle-avancado{
+    display:flex; align-items:center; gap:6px; background:none; border:none; color:var(--primary);
+    font-size:13px; font-weight:600; padding:2px 0; margin-bottom:4px;
+  }
+  .toggle-avancado svg{width:14px; height:14px; transition:transform .2s;}
+  .toggle-avancado.aberto svg{transform:rotate(90deg);}
+  .campos-avancados{
+    display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease; margin-top:2px;
+  }
+  .campos-avancados.aberto{grid-template-rows:1fr;}
+  .campos-avancados-inner{overflow:hidden;}
+  .campos-avancados-conteudo{padding-top:4px;}
+  .nota-avancado{font-size:12px; color:var(--text-muted); margin:-4px 0 14px;}
+
+  @media(max-width:640px){
+    .app{padding:20px 16px 48px;}
+    .header h1{font-size:26px;}
+    .campo-linha{flex-direction:column; gap:0;}
+    .mini-stats{flex-direction:column; gap:8px;}
+    .mini-stat + .mini-stat{border-left:none; padding-left:0; margin-left:0; border-top:1px solid var(--border-soft); padding-top:8px;}
+    .mini-cards-detalhe{grid-template-columns:1fr;}
+    .servico-resumo{display:none;}
+    .ponto-dados{font-size:12px;}
+  }
+</style>
+
+<div class="app">
+
+  <!-- ================= VIEW 1: LISTA DE HDs ================= -->
+  <div id="viewLista">
+    <div class="header">
+      <div>
+        <h1>Arquivo de HDs</h1>
+        <p class="subtitulo">Catálogo de gravações de engenharia de tráfego — escolha um HD para ver seus serviços e pontos.</p>
+      </div>
+      <div class="header-acoes">
+        <div class="badge-contador" id="badgeContador"><b>0</b>&nbsp;HDs</div>
+        <button class="btn btn-primary" id="btnNovo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Novo HD</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="toolbar">
+      <div class="busca-wrap" id="buscaWrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="busca" placeholder="Buscar por HD, serviço ou ponto (ex: BR-386, Aranha)...">
+        <button class="limpar tip" data-tip="Limpar busca" id="btnLimparBusca" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <select id="filtroCategoria"><option value="">Todas as categorias</option></select>
+    </div>
+
+    <p class="caption" id="contador"></p>
+    <div class="grid" id="grid"></div>
+    <div class="vazio" id="vazio" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="7" width="18" height="12" rx="2.5"/><path d="M3 13h18"/><circle cx="7.5" cy="16" r=".6" fill="currentColor"/></svg>
+      <strong id="vazioTitulo">Nenhum HD catalogado ainda</strong>
+      <span id="vazioTexto">Clique em "Novo HD" para começar a organizar seu arquivo.</span>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 2: DETALHE DO HD (Serviços > Pontos) ================= -->
+  <div id="viewDetalhe" class="oculto">
+    <div class="breadcrumb" id="btnVoltar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Todos os HDs <span class="atual" id="breadcrumbAtual">&nbsp;/ —</span>
+    </div>
+
+    <div class="detalhe-header">
+      <div class="detalhe-header-topo">
+        <div class="detalhe-header-titulos">
+          <div class="card-icone" style="width:44px;height:44px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M2.5 14h19"/><circle cx="7" cy="17" r=".6" fill="currentColor"/><circle cx="10" cy="17" r=".6" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <h2 id="detNome">—</h2>
+            <div class="meta" id="detMeta">—</div>
+          </div>
+        </div>
+        <div class="menu-wrap">
+          <button class="icon-btn tip" data-tip="Mais ações" id="btnMenuHdDetalhe"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+          <div class="menu-drop" id="menuHdDetalhe">
+            <button id="btnEditarHdDetalhe"></button>
+            <button class="perigo" id="btnExcluirHdDetalhe"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="progresso-linha">
+        <span class="pct" id="detPct">0% usado</span>
+        <span class="cap" id="detCapTxt">—</span>
+      </div>
+      <div class="barra-moderna" style="height:8px;"><div class="fill" id="detBarraGrande" style="width:0%;"></div></div>
+
+      <div class="mini-cards-detalhe">
+        <div class="mini-card-detalhe"><div class="rot">Capacidade</div><div class="val" id="detCap">—</div></div>
+        <div class="mini-card-detalhe"><div class="rot">Usado</div><div class="val" id="detUsado">—</div></div>
+        <div class="mini-card-detalhe"><div class="rot">Livre</div><div class="val" id="detLivre">—</div></div>
+      </div>
+    </div>
+
+    <div class="busca-interna">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="buscaInterna" placeholder="Buscar serviço ou ponto neste HD...">
+    </div>
+
+    <div class="secao-titulo">
+      <h4>Serviços <span class="contagem" id="contagemServicos"></span></h4>
+      <button class="btn btn-sm btn-ghost" id="btnAddServico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Novo serviço</button>
+    </div>
+
+    <div class="lista-servicos" id="listaServicos"></div>
+    <div class="sem-servicos oculto" id="semServicos">Nenhum serviço cadastrado ainda neste HD. Clique em "Novo serviço" para começar.</div>
+  </div>
+</div>
+
+<!-- Modal: novo/editar HD -->
+<div class="overlay" id="overlayForm">
+  <div class="modal">
+    <div class="modal-cabecalho">
+      <h2 id="modalTitulo">Novo HD</h2>
+      <button class="fechar-x" id="fecharForm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p class="subtitulo">Informações de identificação e categoria do HD</p>
+    <input type="hidden" id="campoId">
+    <div class="campo">
+      <label>Nome / etiqueta *</label>
+      <input type="text" id="campoNome" placeholder="Ex: HD-01 Vermelho">
+    </div>
+    <div class="campo-linha">
+      <div class="campo">
+        <label>Capacidade total</label>
+        <input type="number" id="campoCapacidadeValor" placeholder="Ex: 2" min="0" step="0.1">
+      </div>
+      <div class="campo" style="max-width:110px;">
+        <label>Unidade</label>
+        <select id="campoCapacidadeUnidade"><option value="GB">GB</option><option value="TB" selected>TB</option></select>
+      </div>
+      <div class="campo">
+        <label>Número de série</label>
+        <input type="text" id="campoSerie" placeholder="Opcional">
+      </div>
+    </div>
+    <div class="campo-linha">
+      <div class="campo">
+        <label>Categoria</label>
+        <select id="campoCategoria">
+          <option>Gravações ativas</option><option>Backup</option><option>Arquivo morto</option>
+          <option>Manutenção</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Localização física</label>
+        <input type="text" id="campoLocal" placeholder="Ex: gaveta 3, prateleira B">
+      </div>
+    </div>
+    <div class="campo">
+      <label>Anotações gerais</label>
+      <textarea id="campoNotas" placeholder="Observações gerais sobre este HD..."></textarea>
+    </div>
+    <div class="msg-erro" id="msgErro">Preencha ao menos o nome do HD.</div>
+    <div class="modal-acoes">
+      <button class="btn btn-ghost" id="btnCancelar">Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvar">Salvar HD</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: novo/editar Serviço -->
+<div class="overlay" id="overlayServico">
+  <div class="modal">
+    <div class="modal-cabecalho">
+      <h2 id="servicoModalTitulo">Novo serviço</h2>
+      <button class="fechar-x" id="fecharServico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p class="subtitulo">O serviço organiza os pontos gravados dentro deste HD</p>
+    <input type="hidden" id="servicoId">
+    <div class="campo">
+      <label>Nome do serviço *</label>
+      <input type="text" id="servicoNome" placeholder="Ex: BR-386, Aranha, P11">
+    </div>
+    <div class="msg-erro" id="servicoMsgErro">Preencha o nome do serviço.</div>
+    <div class="modal-acoes">
+      <button class="btn btn-ghost" id="btnCancelarServico">Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvarServico">Salvar serviço</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: novo/editar Ponto -->
+<div class="overlay" id="overlayPonto">
+  <div class="modal">
+    <div class="modal-cabecalho">
+      <h2 id="pontoModalTitulo">Novo ponto</h2>
+      <button class="fechar-x" id="fecharPonto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p class="subtitulo" id="pontoModalServico">—</p>
+    <input type="hidden" id="pontoId">
+    <div class="campo">
+      <label>Nome do ponto *</label>
+      <input type="text" id="pontoNome" placeholder="Ex: Ponto 01">
+    </div>
+    <div class="campo-linha">
+      <div class="campo">
+        <label>Dias de gravação</label>
+        <input type="number" id="pontoDias" placeholder="Ex: 15" min="0" step="1">
+      </div>
+      <div class="campo">
+        <label>Espaço ocupado (GB)</label>
+        <input type="number" id="pontoEspaco" placeholder="Ex: 420" min="0" step="0.1">
+      </div>
+    </div>
+
+    <button type="button" class="toggle-avancado" id="btnToggleAvancado">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      Detalhes técnicos (opcional)
+    </button>
+    <div class="campos-avancados" id="camposAvancados">
+      <div class="campos-avancados-inner">
+        <div class="campos-avancados-conteudo">
+          <p class="nota-avancado">Esses dados ficam guardados no sistema, mas não aparecem na tela principal.</p>
+          <div class="campo-linha">
+            <div class="campo">
+              <label>Turno</label>
+              <select id="pontoTurno">
+                <option value="">Não informado</option>
+                <option value="Manhã">Manhã</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noite">Noite</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label>Qtd. de vídeos</label>
+              <input type="number" id="pontoVideos" placeholder="Ex: 120" min="0" step="1">
+            </div>
+            <div class="campo">
+              <label>Qtd. de imagens</label>
+              <input type="number" id="pontoImagens" placeholder="Ex: 340" min="0" step="1">
+            </div>
+          </div>
+          <div class="campo">
+            <label>Observações técnicas</label>
+            <textarea id="pontoObservacoes" placeholder="Notas adicionais sobre esta gravação..." style="min-height:56px;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="msg-erro" id="pontoMsgErro">Preencha o nome do ponto.</div>
+    <div class="modal-acoes">
+      <button class="btn btn-ghost" id="btnCancelarPonto">Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvarPonto">Salvar ponto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: confirmação -->
+<div class="overlay" id="overlayConfirm">
+  <div class="modal">
+    <div class="modal-cabecalho">
+      <h2 id="confirmTitulo">Confirmar ação</h2>
+      <button class="fechar-x" id="fecharConfirm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p id="confirmMensagem">Tem certeza?</p>
+    <div class="modal-acoes">
+      <button class="btn btn-ghost" id="btnConfirmCancelar">Cancelar</button>
+      <button class="btn btn-danger" id="btnConfirmOk">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const CHAVE = 'hd-catalogo';
+  let hds = [];
+  let detalheAtualId = null;
+  let menuAbertoId = null;
+  let confirmCallback = null;
+  let servicoEmEdicaoId = null;
+  let servicoAlvoParaPonto = null; // serviço no qual um novo ponto será criado
+  let pontoEmEdicaoId = null;
+
+  const cores = {
+    'Gravações ativas':'#22C55E', 'Backup':'#2DD4BF', 'Arquivo morto':'#9CA3AF',
+    'Manutenção':'#F59E0B', 'Outro':'#94A3B8'
+  };
+
+  const ICONS = {
+    hardDrive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M2.5 14h19"/><circle cx="7" cy="17" r=".6" fill="currentColor"/><circle cx="10" cy="17" r=".6" fill="currentColor"/></svg>',
+    database: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>',
+    gauge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l3-4"/><circle cx="12" cy="14" r="1"/><path d="M4.5 14a7.5 7.5 0 0 1 15 0"/><path d="M2 20h20"/></svg>',
+    layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+    mapPin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a6 6 0 0 0-6 6c0 4.2 6 12 6 12s6-7.8 6-12a6 6 0 0 0-6-6z"/><circle cx="12" cy="8" r="2"/></svg>'
+  };
+
+  const el = (id) => document.getElementById(id);
+  const grid = el('grid');
+  const vazio = el('vazio');
+  const contador = el('contador');
+  const overlayForm = el('overlayForm');
+  const overlayServico = el('overlayServico');
+  const overlayPonto = el('overlayPonto');
+  const overlayConfirm = el('overlayConfirm');
+  const filtroCategoria = el('filtroCategoria');
+  const busca = el('busca');
+  const buscaWrap = el('buscaWrap');
+  const buscaInterna = el('buscaInterna');
+  const viewLista = el('viewLista');
+  const viewDetalhe = el('viewDetalhe');
+
+  const proximoId = () => 'id_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+  const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  function capacidadeEmGB(h){
+    const v = parseFloat(h.capacidadeValor) || 0;
+    return h.capacidadeUnidade === 'TB' ? v * 1024 : v;
+  }
+  function todosOsPontos(h){
+    return (h.servicos || []).flatMap(s => s.pontos || []);
+  }
+  function usadoEmGB(h){
+    return todosOsPontos(h).reduce((soma, p) => soma + (parseFloat(p.espacoGB) || 0), 0);
+  }
+  function usadoServicoGB(s){
+    return (s.pontos || []).reduce((soma, p) => soma + (parseFloat(p.espacoGB) || 0), 0);
+  }
+  function formatarGB(gb){
+    if(gb >= 1024) return (gb/1024).toFixed(2).replace(/\.00$/,'') + ' TB';
+    return gb.toFixed(1).replace(/\.0$/,'') + ' GB';
+  }
+  function statusDeUso(pct){
+    if(pct < 60) return 'success';
+    if(pct <= 85) return 'warning';
+    return 'error';
+  }
+
+  /* ---------- Migração de dados antigos (pontos direto no HD) ---------- */
+  function migrarHd(h){
+    if(!h.servicos){
+      if(h.pontos && h.pontos.length){
+        h.servicos = [{
+          id: proximoId(),
+          nome: 'Geral',
+          pontos: h.pontos.map(p => ({
+            id: p.id || proximoId(), nome: p.nome, dias: '', espacoGB: p.tamanho || 0,
+            turno:'', qtdVideos:'', qtdImagens:'', observacoes: p.descricao || ''
+          }))
+        }];
+      }else{
+        h.servicos = [];
+      }
+      delete h.pontos;
+    }
+    h.servicos.forEach(s => { if(!s.pontos) s.pontos = []; });
+    return h;
+  }
+
+  /* ---------- Confirm dialog reutilizável ---------- */
+  function confirmar(mensagem, tituloBtn){
+    return new Promise((resolve) => {
+      el('confirmMensagem').textContent = mensagem;
+      el('btnConfirmOk').textContent = tituloBtn || 'Excluir';
+      overlayConfirm.classList.add('aberto');
+      confirmCallback = resolve;
+    });
+  }
+  function fecharConfirm(resultado){
+    overlayConfirm.classList.remove('aberto');
+    if(confirmCallback){ confirmCallback(resultado); confirmCallback = null; }
+  }
+  el('btnConfirmOk').addEventListener('click', () => fecharConfirm(true));
+  el('btnConfirmCancelar').addEventListener('click', () => fecharConfirm(false));
+  el('fecharConfirm').addEventListener('click', () => fecharConfirm(false));
+  overlayConfirm.addEventListener('click', (e) => { if(e.target === overlayConfirm) fecharConfirm(false); });
+
+  /* ---------- Storage ---------- */
+  async function carregar(){
+    try{
+      const res = await window.storage.get(CHAVE, false);
+      hds = res && res.value ? JSON.parse(res.value) : [];
+      hds.forEach(migrarHd);
+    }catch(e){ hds = []; }
+    atualizarFiltroCategoria();
+    render();
+  }
+  async function salvar(){
+    try{ await window.storage.set(CHAVE, JSON.stringify(hds), false); }catch(e){}
+  }
+
+  function atualizarFiltroCategoria(){
+    const atual = filtroCategoria.value;
+    const categorias = [...new Set(hds.map(h => h.categoria).filter(Boolean))].sort();
+    filtroCategoria.innerHTML = '<option value="">Todas as categorias</option>' +
+      categorias.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    filtroCategoria.value = categorias.includes(atual) ? atual : '';
+  }
+
+  /* ================= VIEW: LISTA DE HDS ================= */
+  function mostrarViewLista(){
+    viewDetalhe.classList.add('oculto');
+    viewLista.classList.remove('oculto');
+    detalheAtualId = null;
+    render();
+  }
+
+  function renderStats(){
+    const statsGrid = el('statsGrid');
+    const capTotal = hds.reduce((s,h) => s + capacidadeEmGB(h), 0);
+    const usoTotal = hds.reduce((s,h) => s + usadoEmGB(h), 0);
+    const totalServicos = hds.reduce((s,h) => s + (h.servicos||[]).length, 0);
+    const totalPontos = hds.reduce((s,h) => s + todosOsPontos(h).length, 0);
+    const pct = capTotal > 0 ? Math.min(100, Math.round((usoTotal/capTotal)*100)) : 0;
+    const status = statusDeUso(pct);
+
+    el('badgeContador').innerHTML = `<b>${hds.length}</b>&nbsp;HD${hds.length === 1 ? '' : 's'}`;
+
+    statsGrid.innerHTML = `
+      <div class="stat-card c-primary">
+        <div class="stat-icone">${ICONS.hardDrive}</div>
+        <div><div class="stat-numero">${hds.length}</div><div class="stat-label">HDs catalogados</div></div>
+      </div>
+      <div class="stat-card c-purple">
+        <div class="stat-icone">${ICONS.database}</div>
+        <div><div class="stat-numero">${capTotal > 0 ? formatarGB(capTotal) : '—'}</div><div class="stat-label">Capacidade total</div></div>
+      </div>
+      <div class="stat-card c-${status}">
+        <div class="stat-icone">${ICONS.gauge}</div>
+        <div><div class="stat-numero">${pct}%</div><div class="stat-label">Uso geral do arquivo</div></div>
+        <div class="barra"><div class="fill fill-${status}" style="width:${pct}%;"></div></div>
+      </div>
+      <div class="stat-card c-success">
+        <div class="stat-icone">${ICONS.layers}</div>
+        <div><div class="stat-numero">${totalServicos}</div><div class="stat-label">${totalPontos} ponto(s) de gravação</div></div>
+      </div>
+    `;
+  }
+
+  function render(){
+    renderStats();
+    const termo = busca.value.trim().toLowerCase();
+    const catFiltro = filtroCategoria.value;
+
+    const filtrados = hds.filter(h => {
+      const bateCategoria = !catFiltro || h.categoria === catFiltro;
+      const servicosTxt = (h.servicos || []).map(s => s.nome + ' ' + (s.pontos||[]).map(p => p.nome).join(' ')).join(' ');
+      const alvo = [h.nome, h.serie, h.local, h.notas, h.categoria, servicosTxt].join(' ').toLowerCase();
+      const bateTermo = !termo || alvo.includes(termo);
+      return bateCategoria && bateTermo;
+    }).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+
+    contador.textContent = `Exibindo ${filtrados.length} de ${hds.length} HD(s)`;
+
+    if(hds.length === 0){
+      vazio.style.display = 'flex';
+      el('vazioTitulo').textContent = 'Nenhum HD catalogado ainda';
+      el('vazioTexto').textContent = 'Clique em "Novo HD" para começar a organizar seu arquivo.';
+    }else if(filtrados.length === 0){
+      vazio.style.display = 'flex';
+      el('vazioTitulo').textContent = 'Nenhum resultado encontrado';
+      el('vazioTexto').textContent = 'Tente ajustar os termos da busca ou o filtro de categoria.';
+    }else{
+      vazio.style.display = 'none';
+    }
+
+    grid.innerHTML = '';
+    filtrados.forEach((h, i) => {
+      const cor = cores[h.categoria] || '#94A3B8';
+      const capGB = capacidadeEmGB(h);
+      const usoGB = usadoEmGB(h);
+      const livreGB = Math.max(0, capGB - usoGB);
+      const pct = capGB > 0 ? Math.min(100, Math.round((usoGB / capGB) * 100)) : 0;
+      const status = statusDeUso(pct);
+      const numServicos = (h.servicos||[]).length;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.id = h.id;
+      card.tabIndex = 0;
+      card.style.animationDelay = Math.min(i, 12) * 25 + 'ms';
+      card.innerHTML = `
+        <div class="card-topo">
+          <div class="card-icone">${ICONS.hardDrive}</div>
+          <div class="card-titulos">
+            <h3>${escapeHtml(h.nome)}</h3>
+            <div class="card-meta">
+              ${h.categoria ? `<span class="badge" style="background:${cor}22; color:${cor};">${escapeHtml(h.categoria)}</span>` : ''}
+              ${h.local ? `<span class="tip" data-tip="Localização física" style="display:inline-flex; align-items:center; gap:3px;">${ICONS.mapPin.replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" width="12" height="12"')} ${escapeHtml(h.local)}</span>` : ''}
+            </div>
+          </div>
+          <div class="menu-wrap">
+            <button class="icon-btn tip" data-tip="Mais ações" data-acao="menu" data-id="${h.id}">${ICONS.dots}</button>
+            <div class="menu-drop" id="menu-${h.id}">
+              <button data-acao="editar" data-id="${h.id}">${ICONS.pencil}Editar HD</button>
+              <button class="perigo" data-acao="excluir" data-id="${h.id}">${ICONS.trash}Excluir HD</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="progresso-linha">
+          <span class="pct c-${status}">${pct}% usado</span>
+          <span class="cap">${h.capacidadeValor ? h.capacidadeValor + ' ' + h.capacidadeUnidade : 'sem capacidade definida'}</span>
+        </div>
+        <div class="barra-moderna"><div class="fill fill-${status}" style="width:${pct}%;"></div></div>
+
+        <div class="mini-stats">
+          <div class="mini-stat"><div class="valor">${formatarGB(usoGB)}</div><div class="rotulo">Usado</div></div>
+          <div class="mini-stat"><div class="valor">${capGB > 0 ? formatarGB(livreGB) : '—'}</div><div class="rotulo">Livre</div></div>
+          <div class="mini-stat"><div class="valor">${numServicos}</div><div class="rotulo">Serviço${numServicos===1?'':'s'}</div></div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function fecharTodosMenus(){
+    document.querySelectorAll('.menu-drop.aberto').forEach(m => m.classList.remove('aberto'));
+    menuAbertoId = null;
+  }
+
+  grid.addEventListener('click', async (e) => {
+    const btnMenu = e.target.closest('button[data-acao="menu"]');
+    if(btnMenu){
+      e.stopPropagation();
+      const id = btnMenu.dataset.id;
+      const drop = el('menu-' + id);
+      const jaAberto = drop.classList.contains('aberto');
+      fecharTodosMenus();
+      if(!jaAberto){ drop.classList.add('aberto'); menuAbertoId = id; }
+      return;
+    }
+    const btnAcao = e.target.closest('button[data-acao]');
+    if(btnAcao){
+      e.stopPropagation();
+      const id = btnAcao.dataset.id;
+      fecharTodosMenus();
+      if(btnAcao.dataset.acao === 'editar'){ abrirModalForm(id); }
+      else if(btnAcao.dataset.acao === 'excluir'){ await excluirHd(id); }
+      return;
+    }
+    const card = e.target.closest('.card');
+    if(card){ abrirDetalheHD(card.dataset.id); }
+  });
+
+  grid.addEventListener('keydown', (e) => {
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.card');
+    if(!card || e.target.closest('button')) return;
+    e.preventDefault();
+    abrirDetalheHD(card.dataset.id);
+  });
+
+  document.addEventListener('click', (e) => {
+    if(menuAbertoId && !e.target.closest('.menu-wrap')) fecharTodosMenus();
+  });
+
+  async function excluirHd(id){
+    const h = hds.find(x => x.id === id);
+    const ok = await confirmar(`Excluir "${h.nome}" do catálogo? Todos os serviços e pontos dentro dele serão perdidos.`, 'Excluir HD');
+    if(ok){
+      hds = hds.filter(x => x.id !== id);
+      atualizarFiltroCategoria();
+      if(detalheAtualId === id) mostrarViewLista(); else render();
+      await salvar();
+    }
+  }
+
+  /* ---------- Modal: novo/editar HD ---------- */
+  function abrirModalForm(id){
+    el('msgErro').style.display = 'none';
+    if(id){
+      const h = hds.find(x => x.id === id);
+      el('modalTitulo').textContent = 'Editar HD';
+      el('campoId').value = h.id;
+      el('campoNome').value = h.nome || '';
+      el('campoCapacidadeValor').value = h.capacidadeValor || '';
+      el('campoCapacidadeUnidade').value = h.capacidadeUnidade || 'TB';
+      el('campoSerie').value = h.serie || '';
+      el('campoCategoria').value = h.categoria || 'Gravações ativas';
+      el('campoLocal').value = h.local || '';
+      el('campoNotas').value = h.notas || '';
+    }else{
+      el('modalTitulo').textContent = 'Novo HD';
+      el('campoId').value = '';
+      el('campoNome').value = '';
+      el('campoCapacidadeValor').value = '';
+      el('campoCapacidadeUnidade').value = 'TB';
+      el('campoSerie').value = '';
+      el('campoCategoria').value = 'Gravações ativas';
+      el('campoLocal').value = '';
+      el('campoNotas').value = '';
+    }
+    overlayForm.classList.add('aberto');
+    el('campoNome').focus();
+  }
+  function fecharModalForm(){ overlayForm.classList.remove('aberto'); }
+
+  async function salvarFormulario(){
+    const nome = el('campoNome').value.trim();
+    if(!nome){ el('msgErro').style.display = 'block'; return; }
+    const idExistente = el('campoId').value;
+    const dados = {
+      id: idExistente || proximoId(),
+      nome,
+      capacidadeValor: el('campoCapacidadeValor').value,
+      capacidadeUnidade: el('campoCapacidadeUnidade').value,
+      serie: el('campoSerie').value.trim(),
+      categoria: el('campoCategoria').value,
+      local: el('campoLocal').value.trim(),
+      notas: el('campoNotas').value.trim(),
+      servicos: idExistente ? (hds.find(x => x.id === idExistente).servicos || []) : []
+    };
+    const idx = hds.findIndex(x => x.id === dados.id);
+    if(idx >= 0){ hds[idx] = dados; } else { hds.push(dados); }
+    fecharModalForm();
+    atualizarFiltroCategoria();
+    if(detalheAtualId === dados.id) renderDetalheHD(); else render();
+    await salvar();
+  }
+
+  /* ================= VIEW: DETALHE DO HD ================= */
+  function abrirDetalheHD(id, termoDestaque){
+    detalheAtualId = id;
+    viewLista.classList.add('oculto');
+    viewDetalhe.classList.remove('oculto');
+    buscaInterna.value = termoDestaque || '';
+    renderDetalheHD();
+    window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+  }
+
+  el('btnVoltar').addEventListener('click', mostrarViewLista);
+
+  function renderDetalheHD(){
+    const h = hds.find(x => x.id === detalheAtualId);
+    if(!h) return;
+
+    el('detNome').textContent = h.nome;
+    el('breadcrumbAtual').textContent = ' / ' + h.nome;
+    const corCat = cores[h.categoria] || '#94A3B8';
+    el('detMeta').innerHTML = [
+      h.categoria ? `<span class="badge" style="background:${corCat}22; color:${corCat};">${escapeHtml(h.categoria)}</span>` : '',
+      h.serie ? `<span class="mono">S/N ${escapeHtml(h.serie)}</span>` : '',
+      h.local ? `<span style="display:inline-flex; align-items:center; gap:4px;">${ICONS.mapPin.replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" width="13" height="13"')} ${escapeHtml(h.local)}</span>` : ''
+    ].filter(Boolean).join('');
+
+    const capGB = capacidadeEmGB(h);
+    const usoGB = usadoEmGB(h);
+    const livreGB = Math.max(0, capGB - usoGB);
+    const pct = capGB > 0 ? Math.round((usoGB/capGB)*100) : 0;
+    const status = statusDeUso(pct);
+
+    el('detPct').textContent = pct + '% usado';
+    el('detPct').className = 'pct c-' + status;
+    el('detCapTxt').textContent = h.capacidadeValor ? h.capacidadeValor + ' ' + h.capacidadeUnidade : 'sem capacidade definida';
+    const barraGrande = el('detBarraGrande');
+    barraGrande.className = 'fill fill-' + status;
+    barraGrande.style.width = Math.min(100, pct) + '%';
+    el('detCap').textContent = capGB > 0 ? formatarGB(capGB) : '—';
+    el('detUsado').textContent = formatarGB(usoGB);
+    el('detLivre').textContent = capGB > 0 ? formatarGB(livreGB) : '—';
+
+    el('btnEditarHdDetalhe').innerHTML = ICONS.pencil + 'Editar HD';
+    el('btnExcluirHdDetalhe').innerHTML = ICONS.trash + 'Excluir HD';
+
+    renderServicos();
+  }
+
+  el('btnMenuHdDetalhe').addEventListener('click', (e) => {
+    e.stopPropagation();
+    el('menuHdDetalhe').classList.toggle('aberto');
+  });
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('#btnMenuHdDetalhe') && !e.target.closest('#menuHdDetalhe')){
+      el('menuHdDetalhe').classList.remove('aberto');
+    }
+  });
+  el('btnEditarHdDetalhe').addEventListener('click', () => {
+    el('menuHdDetalhe').classList.remove('aberto');
+    abrirModalForm(detalheAtualId);
+  });
+  el('btnExcluirHdDetalhe').addEventListener('click', async () => {
+    el('menuHdDetalhe').classList.remove('aberto');
+    await excluirHd(detalheAtualId);
+  });
+
+  let estadoAcordeon = {}; // servicoId -> aberto (bool), reiniciado a cada abertura de HD
+
+  function renderServicos(){
+    const h = hds.find(x => x.id === detalheAtualId);
+    if(!h) return;
+    const termo = buscaInterna.value.trim().toLowerCase();
+    const listaServicos = el('listaServicos');
+    listaServicos.innerHTML = '';
+
+    el('contagemServicos').textContent = h.servicos.length ? `(${h.servicos.length})` : '';
+
+    const servicosVisiveis = h.servicos.map(s => {
+      const nomeBate = termo && s.nome.toLowerCase().includes(termo);
+      const pontosFiltrados = !termo ? s.pontos : s.pontos.filter(p => p.nome.toLowerCase().includes(termo) || nomeBate);
+      return {servico:s, pontosFiltrados, visivel: !termo || nomeBate || pontosFiltrados.length > 0};
+    }).filter(x => x.visivel);
+
+    el('semServicos').classList.toggle('oculto', h.servicos.length > 0);
+    if(h.servicos.length > 0 && servicosVisiveis.length === 0){
+      listaServicos.innerHTML = `<div class="sem-pontos">Nenhum serviço ou ponto encontrado para "${escapeHtml(buscaInterna.value)}".</div>`;
+      return;
+    }
+
+    servicosVisiveis.forEach(({servico: s, pontosFiltrados}, i) => {
+      const aberto = termo ? true : !!estadoAcordeon[s.id];
+      const usoServico = usadoServicoGB(s);
+      const item = document.createElement('div');
+      item.className = 'servico-item' + (aberto ? ' aberto' : '');
+      item.dataset.servicoId = s.id;
+      item.style.animationDelay = Math.min(i, 10) * 25 + 'ms';
+
+      const linhasPontos = (termo ? pontosFiltrados : s.pontos).map(p => {
+        const destaque = termo && p.nome.toLowerCase().includes(termo) ? ' destaque' : '';
+        const dias = p.dias !== '' && p.dias !== undefined && p.dias !== null ? `${p.dias} dia${p.dias == 1 ? '' : 's'}` : '— dias';
+        const espaco = formatarGB(parseFloat(p.espacoGB) || 0);
+        return `
+          <div class="ponto-linha${destaque}" data-ponto-id="${p.id}">
+            <span class="ponto-pin">${ICONS.pin}</span>
+            <span class="ponto-nome">${escapeHtml(p.nome)}</span>
+            <span class="ponto-dados">${dias} • ${espaco}</span>
+            <div class="acoes-ponto">
+              <button class="icon-btn tip" data-tip="Editar ponto" data-acao="editar-ponto" data-servico="${s.id}" data-ponto="${p.id}">${ICONS.pencil}</button>
+              <button class="icon-btn perigo tip" data-tip="Excluir ponto" data-acao="excluir-ponto" data-servico="${s.id}" data-ponto="${p.id}">${ICONS.trash}</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      item.innerHTML = `
+        <div class="servico-cabecalho" data-acao="toggle" data-id="${s.id}">
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          <span class="servico-nome">${escapeHtml(s.nome)}</span>
+          <span class="servico-resumo">${s.pontos.length} ponto${s.pontos.length===1?'':'s'} · ${formatarGB(usoServico)}</span>
+          <div class="acoes-servico">
+            <button class="icon-btn tip" data-tip="Editar serviço" data-acao="editar-servico" data-id="${s.id}">${ICONS.pencil}</button>
+            <button class="icon-btn perigo tip" data-tip="Excluir serviço" data-acao="excluir-servico" data-id="${s.id}">${ICONS.trash}</button>
+          </div>
+        </div>
+        <div class="servico-corpo">
+          <div class="servico-corpo-inner">
+            <div class="servico-conteudo">
+              ${s.pontos.length === 0 ? '<div class="sem-pontos">Nenhum ponto cadastrado neste serviço ainda.</div>' : linhasPontos}
+              <div class="rodape-servico">
+                <button class="btn btn-sm btn-ghost" data-acao="add-ponto" data-id="${s.id}">${ICONS.plus}Adicionar ponto</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      listaServicos.appendChild(item);
+    });
+  }
+
+  el('listaServicos').addEventListener('click', async (e) => {
+    const h = hds.find(x => x.id === detalheAtualId);
+    if(!h) return;
+
+    const btnAcao = e.target.closest('button[data-acao]');
+    if(btnAcao){
+      e.stopPropagation();
+      const acao = btnAcao.dataset.acao;
+      if(acao === 'editar-servico'){ abrirModalServico(btnAcao.dataset.id); }
+      else if(acao === 'excluir-servico'){
+        const s = h.servicos.find(x => x.id === btnAcao.dataset.id);
+        const ok = await confirmar(`Excluir o serviço "${s.nome}" e todos os seus ${s.pontos.length} ponto(s)?`, 'Excluir serviço');
+        if(ok){
+          h.servicos = h.servicos.filter(x => x.id !== s.id);
+          renderDetalheHD();
+          await salvar();
+        }
+      }
+      else if(acao === 'add-ponto'){ abrirModalPonto(btnAcao.dataset.id, null); }
+      else if(acao === 'editar-ponto'){ abrirModalPonto(btnAcao.dataset.servico, btnAcao.dataset.ponto); }
+      else if(acao === 'excluir-ponto'){
+        const s = h.servicos.find(x => x.id === btnAcao.dataset.servico);
+        const p = s.pontos.find(x => x.id === btnAcao.dataset.ponto);
+        const ok = await confirmar(`Excluir o ponto "${p.nome}"?`, 'Excluir ponto');
+        if(ok){
+          s.pontos = s.pontos.filter(x => x.id !== p.id);
+          renderDetalheHD();
+          await salvar();
+        }
+      }
+      return;
+    }
+
+    const cabecalho = e.target.closest('.servico-cabecalho');
+    if(cabecalho){
+      const id = cabecalho.dataset.id;
+      estadoAcordeon[id] = !estadoAcordeon[id];
+      cabecalho.closest('.servico-item').classList.toggle('aberto', estadoAcordeon[id]);
+    }
+  });
+
+  buscaInterna.addEventListener('input', renderServicos);
+
+  /* ---------- Modal: novo/editar Serviço ---------- */
+  function abrirModalServico(id){
+    servicoEmEdicaoId = id || null;
+    el('servicoMsgErro').style.display = 'none';
+    if(id){
+      const h = hds.find(x => x.id === detalheAtualId);
+      const s = h.servicos.find(x => x.id === id);
+      el('servicoModalTitulo').textContent = 'Editar serviço';
+      el('servicoId').value = s.id;
+      el('servicoNome').value = s.nome;
+    }else{
+      el('servicoModalTitulo').textContent = 'Novo serviço';
+      el('servicoId').value = '';
+      el('servicoNome').value = '';
+    }
+    overlayServico.classList.add('aberto');
+    el('servicoNome').focus();
+  }
+  function fecharModalServico(){ overlayServico.classList.remove('aberto'); }
+
+  async function salvarServico(){
+    const nome = el('servicoNome').value.trim();
+    if(!nome){ el('servicoMsgErro').style.display = 'block'; return; }
+    const h = hds.find(x => x.id === detalheAtualId);
+    const idExistente = el('servicoId').value;
+    if(idExistente){
+      const s = h.servicos.find(x => x.id === idExistente);
+      s.nome = nome;
+    }else{
+      const novoId = proximoId();
+      h.servicos.push({id: novoId, nome, pontos: []});
+      estadoAcordeon[novoId] = true;
+    }
+    fecharModalServico();
+    renderDetalheHD();
+    await salvar();
+  }
+
+  el('btnAddServico').addEventListener('click', () => abrirModalServico(null));
+  el('fecharServico').addEventListener('click', fecharModalServico);
+  el('btnCancelarServico').addEventListener('click', fecharModalServico);
+  el('btnSalvarServico').addEventListener('click', salvarServico);
+  overlayServico.addEventListener('click', (e) => { if(e.target === overlayServico) fecharModalServico(); });
+
+  /* ---------- Modal: novo/editar Ponto ---------- */
+  function abrirModalPonto(servicoId, pontoId){
+    servicoAlvoParaPonto = servicoId;
+    pontoEmEdicaoId = pontoId || null;
+    el('pontoMsgErro').style.display = 'none';
+    const h = hds.find(x => x.id === detalheAtualId);
+    const s = h.servicos.find(x => x.id === servicoId);
+    el('pontoModalServico').textContent = 'Serviço: ' + s.nome;
+
+    el('camposAvancados').classList.remove('aberto');
+    el('btnToggleAvancado').classList.remove('aberto');
+
+    if(pontoId){
+      const p = s.pontos.find(x => x.id === pontoId);
+      el('pontoModalTitulo').textContent = 'Editar ponto';
+      el('pontoId').value = p.id;
+      el('pontoNome').value = p.nome || '';
+      el('pontoDias').value = p.dias || '';
+      el('pontoEspaco').value = p.espacoGB || '';
+      el('pontoTurno').value = p.turno || '';
+      el('pontoVideos').value = p.qtdVideos || '';
+      el('pontoImagens').value = p.qtdImagens || '';
+      el('pontoObservacoes').value = p.observacoes || '';
+    }else{
+      el('pontoModalTitulo').textContent = 'Novo ponto';
+      el('pontoId').value = '';
+      el('pontoNome').value = '';
+      el('pontoDias').value = '';
+      el('pontoEspaco').value = '';
+      el('pontoTurno').value = '';
+      el('pontoVideos').value = '';
+      el('pontoImagens').value = '';
+      el('pontoObservacoes').value = '';
+    }
+    overlayPonto.classList.add('aberto');
+    el('pontoNome').focus();
+  }
+  function fecharModalPonto(){ overlayPonto.classList.remove('aberto'); }
+
+  el('btnToggleAvancado').addEventListener('click', () => {
+    const aberto = el('camposAvancados').classList.toggle('aberto');
+    el('btnToggleAvancado').classList.toggle('aberto', aberto);
+  });
+
+  async function salvarPontoModal(){
+    const nome = el('pontoNome').value.trim();
+    if(!nome){ el('pontoMsgErro').style.display = 'block'; return; }
+    const h = hds.find(x => x.id === detalheAtualId);
+    const s = h.servicos.find(x => x.id === servicoAlvoParaPonto);
+    const dados = {
+      id: pontoEmEdicaoId || proximoId(),
+      nome,
+      dias: el('pontoDias').value,
+      espacoGB: el('pontoEspaco').value,
+      turno: el('pontoTurno').value,
+      qtdVideos: el('pontoVideos').value,
+      qtdImagens: el('pontoImagens').value,
+      observacoes: el('pontoObservacoes').value.trim()
+    };
+    const idx = s.pontos.findIndex(p => p.id === dados.id);
+    if(idx >= 0){ s.pontos[idx] = dados; } else { s.pontos.push(dados); }
+    estadoAcordeon[s.id] = true;
+    fecharModalPonto();
+    renderDetalheHD();
+    await salvar();
+  }
+
+  el('fecharPonto').addEventListener('click', fecharModalPonto);
+  el('btnCancelarPonto').addEventListener('click', fecharModalPonto);
+  el('btnSalvarPonto').addEventListener('click', salvarPontoModal);
+  overlayPonto.addEventListener('click', (e) => { if(e.target === overlayPonto) fecharModalPonto(); });
+
+  /* ---------- Eventos gerais ---------- */
+  el('btnNovo').addEventListener('click', () => abrirModalForm(null));
+  el('btnCancelar').addEventListener('click', fecharModalForm);
+  el('fecharForm').addEventListener('click', fecharModalForm);
+  el('btnSalvar').addEventListener('click', salvarFormulario);
+  overlayForm.addEventListener('click', (e) => { if(e.target === overlayForm) fecharModalForm(); });
+
+  busca.addEventListener('input', () => {
+    buscaWrap.classList.toggle('tem-texto', busca.value.length > 0);
+    render();
+  });
+  el('btnLimparBusca').addEventListener('click', () => {
+    busca.value = '';
+    buscaWrap.classList.remove('tem-texto');
+    render();
+    busca.focus();
+  });
+  filtroCategoria.addEventListener('change', render);
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key !== 'Escape') return;
+    if(overlayConfirm.classList.contains('aberto')){ fecharConfirm(false); return; }
+    if(overlayPonto.classList.contains('aberto')){ fecharModalPonto(); return; }
+    if(overlayServico.classList.contains('aberto')){ fecharModalServico(); return; }
+    if(overlayForm.classList.contains('aberto')){ fecharModalForm(); return; }
+    if(menuAbertoId){ fecharTodosMenus(); return; }
+    if(!viewDetalhe.classList.contains('oculto')){ mostrarViewLista(); }
+  });
+
+  carregar();
+})();
+</script>
