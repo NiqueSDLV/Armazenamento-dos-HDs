@@ -1,0 +1,17 @@
+# Segredos (nunca enviar ao GitHub)
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel
+
+# Dependências (caso o projeto cresça)
+node_modules/
+
+# Sistema e editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
